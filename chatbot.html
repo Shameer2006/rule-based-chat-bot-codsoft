@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rule-Based Chatbot</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the chatbot */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .chat-container {
+            width: 100%;
+            max-width: 600px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            height: 80vh; /* Set a fixed height for better mobile experience */
+            max-height: 700px;
+        }
+        .chat-header {
+            background-color: #4f46e5;
+            color: white;
+            padding: 16px 20px;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: 600;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+        .chat-messages {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background-color: #e2e8f0; /* Light background for messages */
+        }
+        .message {
+            max-width: 75%;
+            padding: 10px 15px;
+            border-radius: 10px;
+            word-wrap: break-word;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .message.user {
+            align-self: flex-end;
+            background-color: #3b82f6; /* Blue for user messages */
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+        .message.bot {
+            align-self: flex-start;
+            background-color: #6b7280; /* Gray for bot messages */
+            color: white;
+            border-bottom-left-radius: 2px;
+        }
+        .chat-input-area {
+            display: flex;
+            padding: 15px 20px;
+            border-top: 1px solid #e2e8f0;
+            background-color: #ffffff;
+        }
+        .chat-input {
+            flex-grow: 1;
+            padding: 12px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 25px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .chat-input:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+        .send-button {
+            background-color: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 20px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .send-button:hover {
+            background-color: #4338ca;
+            transform: translateY(-1px);
+        }
+        .send-button:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            Rule-Based Chatbot
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <!-- Initial bot message -->
+            <div class="message bot">Hello! I'm a simple rule-based chatbot. How can I help you?</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="user-input" class="chat-input" placeholder="Type your message...">
+            <button id="send-button" class="send-button">Send</button>
+        </div>
+    </div>
+
+    <script>
+        // Get references to DOM elements
+        const chatMessages = document.getElementById('chat-messages');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+
+        /**
+         * Adds a message to the chat display.
+         * @param {string} text - The message text.
+         * @param {string} sender - 'user' or 'bot'.
+         */
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', sender);
+            messageDiv.textContent = text;
+            chatMessages.appendChild(messageDiv);
+            // Scroll to the bottom of the chat
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        /**
+         * Processes user input and generates a bot response based on predefined rules.
+         * @param {string} message - The user's input message.
+         * @returns {string} The bot's response.
+         */
+        function getBotResponse(message) {
+            const lowerCaseMessage = message.toLowerCase();
+
+            // Rule 1: Greetings
+            if (lowerCaseMessage.includes('hello') || lowerCaseMessage.includes('hi') || lowerCaseMessage.includes('hey')) {
+                return "Hello there! How can I help you today?";
+            }
+            // Rule 2: Asking about name
+            else if (lowerCaseMessage.includes('your name')) {
+                return "I am a simple rule-based chatbot, you can call me Chatbot!";
+            }
+            // Rule 3: Asking about weather (example, without actual weather data)
+            else if (lowerCaseMessage.includes('weather')) {
+                return "I don't have access to real-time weather information, but I hope it's a nice day!";
+            }
+            // Rule 4: Asking about age
+            else if (lowerCaseMessage.includes('how old are you')) {
+                return "I don't have an age, as I am just a program.";
+            }
+            // Rule 5: Saying goodbye
+            else if (lowerCaseMessage.includes('bye') || lowerCaseMessage.includes('goodbye')) {
+                return "Goodbye! Have a great day!";
+            }
+            // Rule 6: Thank you
+            else if (lowerCaseMessage.includes('thank you') || lowerCaseMessage.includes('thanks')) {
+                return "You're welcome! Is there anything else you need?";
+            }
+            // Rule 7: Basic query about purpose
+            else if (lowerCaseMessage.includes('what can you do') || lowerCaseMessage.includes('help me')) {
+                return "I can respond to simple queries based on my predefined rules. Try asking me about my name, or say hello!";
+            }
+            // Default response for unrecognized queries
+            else {
+                return "I'm not sure how to respond to that. Could you try rephrasing?";
+            }
+        }
+
+        /**
+         * Handles sending a message.
+         */
+        function sendMessage() {
+            const userMessage = userInput.value.trim();
+
+            if (userMessage !== '') {
+                addMessage(userMessage, 'user'); // Display user's message
+                userInput.value = ''; // Clear input field
+
+                // Get and display bot's response after a short delay for a more natural feel
+                setTimeout(() => {
+                    const botResponse = getBotResponse(userMessage);
+                    addMessage(botResponse, 'bot');
+                }, 500); // 0.5 second delay
+            }
+        }
+
+        // Event Listeners
+        sendButton.addEventListener('click', sendMessage); // Send message on button click
+
+        userInput.addEventListener('keypress', (event) => {
+            // Send message on Enter key press
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Initialize with a welcome message
+        window.onload = function() {
+            // Initial bot message is already in HTML, so no need to add here
+        };
+
+    </script>
+</body>
+</html>
